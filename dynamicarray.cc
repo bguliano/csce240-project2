@@ -52,6 +52,7 @@ the additional values should all be 0. */
 void SetSize(int newSize, bool isCopy) {
     if(newSize < 1) {
         // set size equal to 1 and set that value == 0.
+        // plug leak
     }
     if(!isCopy) { 
         int * temp = new DyanmicArray[newSize];
@@ -71,4 +72,4 @@ found and removed. If every value in the array matches the value that’s to be
 removed, the resulting array should have size 1, and hold a single 0 in that one
 position. */
 
-// note: ^ this function should utlize SetSize funct
+// note: ^ this function should utilize SetSize funct
