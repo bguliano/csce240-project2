@@ -1,7 +1,5 @@
 // Copyright 2026 bguliano and erin-owens
 
-#include "dynamicarray.h"
-
 #include<iostream>
 using std::ostream;
 
@@ -11,7 +9,7 @@ between each pair of values in the array. */
 
 ostream& operator << (ostream& whereto, const DynamicArray& arr){
     for(int i = 0; i <= arr.GetSize() - 1; ++i) {
-        whereto << arr.values_[i];
+        whereto << arr.value_[i];
 
         if(i != arr.GetSize() - 1) {
             whereto << arr.GetDelimiter();
@@ -29,7 +27,7 @@ bool DynamicArray::operator == (const DynamicArray& right) const {
     }
     // now loop through each array to check value for value
     for(int i = 0; i < size_; ++i){
-        if(values_[i] != right.values_[i]) {
+        if(value_[i] != right.value_[i]) {
             return false;
         }
     }
@@ -50,17 +48,31 @@ the additional values should all be 0. */
 
 // if you are NOT copying values, just make new block of memory, then plug leak
 // if you ARE copying values...
-// then update size?
-void DynamicArray::SetSize(int newSize, bool isCopy) {
+// then update size
+void SetSize(int newSize, bool isCopy) {
     if(newSize < 1) {
-        // set size equal to 1 and set that value == 0.
-        // plug leak
+        newSize = 1;
+        isCopy = false;
     }
-    if(!isCopy) {
-        DynamicArray * temp = new DynamicArray[newSize];
-        size_ = newSize;
 
+    // Since valid input, allocate mem
+    int * temp = new int[newSize];      
+    if(!isCopy) { 
+        for(int i = 0; i < newSize; ++i) {
+            temp[i] = 0;
+        }
+    } else {
+        int smaller = (size_ < newSize) ? size_ : newSize;
+        for(int i = 0; i < smaller; ++i) {
+            temp[i] = values_[i];
+        }
+        for(int i = smaller; i < newSize; ++i) {
+            temp[i] = 0;
+        }
     }
+    delete[] values_;
+    values_ = temp;
+    size_ = newSize;
 }
 
 /* An AllUnique function that returns true if all of the values in the array are
