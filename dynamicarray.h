@@ -22,11 +22,15 @@ public:
 
     int GetSize() const;
 
-    void SetSize(int newSize, bool ifCopy = true);
+    void SetSize(int newSize, bool isCopy = true);
 
-    bool AllUnique (const DynamicArray& arr) const;
+    bool AllUnique () const;
 
     int RemoveAll (int toRemove);
+
+    void Insert (int toAdd, int index);
+
+    void CopyHelper (int start, int end, int * ptr);
 
     // same from HourlyTemperature.h
     DynamicArray &operator=(const DynamicArray &copy_from) {
@@ -42,11 +46,11 @@ public:
         delete[] values_;
     }
 
-    static void SetDelimiter(char delimiter) {
+    static void SetDelimeter(char delimiter) {
         delimiter_ = delimiter;
     }
 
-    static char GetDelimiter() {
+    static char GetDelimeter() {
         return delimiter_;
     }
 

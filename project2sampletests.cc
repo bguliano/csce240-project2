@@ -13,6 +13,19 @@ int main() {
   DynamicArray::SetDelimeter(',');
   cout << "Here they are with commas between the values " << a << endl;
   DynamicArray::SetDelimeter(' ');
+
+  // My test for insert
+  int toAdd, index;
+  cout << "Enter a value you would like to insert: " << endl;
+  cin >> toAdd;
+  cout << "At what index does this value belong?: " << endl;
+  cin >> index;
+
+  a.Insert(toAdd, index);
+  cout << toAdd << " was added to index " << index << ". Updated array: " << a << endl;
+
+
+
   cout << "Enter " << s << " new values to hold in the array: ";
   for ( int i = 0; i < a.GetSize(); ++i )
     cin >> a[i];
