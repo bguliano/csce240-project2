@@ -9,12 +9,15 @@ using std::ostream;
 
 class DynamicArray {
 friend ostream& operator << (ostream&, const DynamicArray&);
-public:
-    explicit DynamicArray(int size = 1) : size_(size > 0 ? size : 1), values_(new int[size_]()) {
+
+ public:
+    explicit DynamicArray(int size = 1) :
+            size_(size > 0 ? size : 1), values_(new int[size_]()) {
         for (int i = 0; i < size_; i++) values_[i] = 0;
     }
 
-    explicit DynamicArray(const DynamicArray &copy_from) : size_(copy_from.size_), values_(new int[size_]) {
+    explicit DynamicArray(const DynamicArray &copy_from) :
+            size_(copy_from.size_), values_(new int[size_]) {
         for (int i = 0; i < size_; i++) values_[i] = copy_from.values_[i];
     }
 
@@ -24,13 +27,13 @@ public:
 
     void SetSize(int newSize, bool isCopy = true);
 
-    bool AllUnique () const;
+    bool AllUnique() const;
 
-    int RemoveAll (int toRemove);
+    int RemoveAll(int toRemove);
 
-    void Insert (int toAdd, int index);
+    void Insert(int toAdd, int index);
 
-    void CopyHelper (int start, int end, int * ptr);
+    void CopyHelper(int start, int end, int * ptr);
 
     // same from HourlyTemperature.h
     DynamicArray &operator=(const DynamicArray &copy_from) {
@@ -46,11 +49,11 @@ public:
         delete[] values_;
     }
 
-    static void SetDelimeter(char delimiter) {
+    static void SetDelimiter(char delimiter) {
         delimiter_ = delimiter;
     }
 
-    static char GetDelimeter() {
+    static char GetDelimiter() {
         return delimiter_;
     }
 
@@ -80,6 +83,7 @@ public:
 
             if (!foundEarlier) uniqueCount++;
         }
+        return uniqueCount;
     }
 
     void RemoveDuplicates() {
@@ -109,7 +113,6 @@ public:
     }
 
     void Sort(bool descending = false) {
-
     }
 
     // version that allows one to use the operator in a non-constant setting
@@ -128,10 +131,10 @@ public:
         return values_[size_ - 1];
     }
 
-private:
+ private:
     int size_;
     int *values_;
-    static char delimiter_; // (for separator used by <<)
+    static char delimiter_;  // (for separator used by <<)
 };
 
-#endif // DYNAMICARRAY_H_
+#endif  // DYNAMICARRAY_H_
