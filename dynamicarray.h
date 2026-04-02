@@ -4,11 +4,19 @@
 #define DYNAMICARRAY_H_
 
 #include<ostream>
-
 using std::ostream;
 
 class DynamicArray {
-friend ostream& operator << (ostream&, const DynamicArray&);
+friend ostream& operator << (ostream& whereto, const DynamicArray& arr) {
+    for (int i = 0; i <= arr.GetSize() - 1; ++i) {
+        whereto << arr.values_[i];
+
+        if (i != arr.GetSize() - 1) {
+            whereto << arr.GetDelimiter();
+        }
+    }
+    return whereto;
+}
 
  public:
     explicit DynamicArray(int size = 1) :
@@ -21,19 +29,126 @@ friend ostream& operator << (ostream&, const DynamicArray&);
         for (int i = 0; i < size_; i++) values_[i] = copy_from.values_[i];
     }
 
-    bool operator == (const DynamicArray& right) const;
+    bool operator == (const DynamicArray& right) const {
+    if (size_ != right.size_) {
+        return false;
+    }
+    // now loop through each array to check value for value
+    for (int i = 0; i < size_; ++i) {
+        if (values_[i] != right.values_[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
-    int GetSize() const;
+    int GetSize() const {
+    return size_;
+}
 
-    void SetSize(int newSize, bool isCopy = true);
+    void SetSize(int newSize, bool isCopy = true) {
+    if (newSize < 1) {
+        newSize = 1;
+        isCopy = false;
+    }
 
-    bool AllUnique() const;
+    // Since valid input, allocate mem
+    int * temp = new int[newSize];
+    if (!isCopy) {
+        for (int i = 0; i < newSize; ++i) {
+            temp[i] = 0;
+        }
+    } else {
+        int smaller = (size_ < newSize) ? size_ : newSize;
+        CopyHelper(0, smaller, temp);
 
-    int RemoveAll(int toRemove);
+        // Now fill rest with 0s
+        for (int i = smaller; i < newSize; ++i) {
+            temp[i] = 0;
+        }
+    }
+    delete[] values_;
+    values_ = temp;
+    size_ = newSize;
+}
 
-    void Insert(int toAdd, int index);
+    bool AllUnique() const {
+    for (int i = 0; i < size_; ++i) {
+        for (int j = i+1; j < size_; ++j) {
+            if (values_[i] == values_[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
-    void CopyHelper(int start, int end, int * ptr);
+    int RemoveAll(int toRemove) {
+    int copyCount = 0;
+    int newSize = size_;
+    for (int i = 0 ; i < size_; ++i) {
+        if (values_[i] == toRemove) {
+            ++copyCount;
+            --newSize;
+            continue;
+        }
+    }
+    if (copyCount == size_) {
+        SetSize(1, false);
+    }
+    int * temp = new int[newSize];
+    for (int i = 0; i < newSize; ++i) {
+        if (values_[i] != toRemove) {
+            temp[i] = values_[i];
+        }
+        if (values_[i] == toRemove) {
+            for (int j = i; j < newSize; ++j) {
+                temp[j] = values_[j+1];
+            }
+            break;
+        }
+    }
+    delete[] values_;
+    values_ = temp;
+    size_ = newSize;
+    return copyCount;
+}
+
+    void Insert(int toAdd, int index) {
+    // validate index: must be greater than 0
+    // leave it the same if invalid index
+    if (index < 0) {
+        return;
+    }
+    if (index > size_) {
+        SetSize(index + 1, true);
+        // this copies values, then sets all extra values to 0
+        // now change target index to toAdd
+        values_[index] = toAdd;
+    } else {
+        // make new array of size + 1
+    // copy values to index -1
+    // insert toAdd at index
+    // finish copying over for index +1 to end
+    int * temp = new int[size_ + 1];
+    CopyHelper(0, index, temp);
+
+    temp[index] = toAdd;
+    CopyHelper(index + 1, size_, temp);
+    for (int i = index +1; i <= size_; ++i) {
+        temp[i] = values_[i-1];
+    }
+    delete[] values_;
+    values_ = temp;
+    }
+    size_++;
+}
+
+    void CopyHelper(int start, int end, int * ptr) {
+    for (int i = start; i < end; ++i) {
+        ptr[i] = values_[i];
+    }
+}
 
     // same from HourlyTemperature.h
     DynamicArray &operator=(const DynamicArray &copy_from) {
@@ -49,7 +164,9 @@ friend ostream& operator << (ostream&, const DynamicArray&);
         delete[] values_;
     }
 
-    static void SetDelimiter(char delimiter) {
+    // char delimiter_ = ' ';
+
+    static void SetDelimiter(char delimiter = ' ') {
         delimiter_ = delimiter;
     }
 
@@ -134,7 +251,7 @@ friend ostream& operator << (ostream&, const DynamicArray&);
  private:
     int size_;
     int *values_;
-    static char delimiter_;  // (for separator used by <<)
+    inline static char delimiter_ = ' ';  // (for separator used by <<)
 };
 
 #endif  // DYNAMICARRAY_H_

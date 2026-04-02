@@ -10,9 +10,19 @@ int main() {
   int s = 10;
   DynamicArray a(s);
   cout << "Initial array of " << s << " elements: " << a << endl;
-  DynamicArray::SetDelimeter(',');
+  DynamicArray::SetDelimiter(',');
   cout << "Here they are with commas between the values " << a << endl;
-  DynamicArray::SetDelimeter(' ');
+  DynamicArray::SetDelimiter(' ');
+
+  cout << "Enter " << s << " new values to hold in the array: ";
+  for ( int i = 0; i < a.GetSize(); ++i )
+    cin >> a[i];
+  cout << "Updated array: " << a << endl;
+  if ( a.AllUnique() )
+    cout << "All the values in the array are unique" << endl;
+  else
+    cout << "The array contains duplicate values" << endl;
+  const DynamicArray kOriginal(a);  // keeping a copy to use later
 
   // My test for insert
   int toAdd, index;
@@ -24,17 +34,6 @@ int main() {
   a.Insert(toAdd, index);
   cout << toAdd << " was added to index " << index << ". Updated array: " << a << endl;
 
-
-
-  cout << "Enter " << s << " new values to hold in the array: ";
-  for ( int i = 0; i < a.GetSize(); ++i )
-    cin >> a[i];
-  cout << "Updated array: " << a << endl;
-  if ( a.AllUnique() )
-    cout << "All the values in the array are unique" << endl;
-  else
-    cout << "The array contains duplicate values" << endl;
-  const DynamicArray kOriginal(a);  // keeping a copy to use later
 
   int added_positions;
   cout << "How many elements do you want to add to the end of the array? ";
