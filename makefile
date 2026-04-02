@@ -10,7 +10,7 @@ project2sampletests : project2sampletests.o dynamicarray.o
 project2sampletests.o : project2sampletests.cc dynamicarray.h
 	$(compile) $<
 
-dynamicarray.o : dynamicarray.cc dynamicarray.h
+dynamicarray.o : dynamicarray.h
 	$(compile) $<
 
 clean :

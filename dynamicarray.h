@@ -3,6 +3,8 @@
 #ifndef DYNAMICARRAY_H_
 #define DYNAMICARRAY_H_
 
+#include "iostream"
+
 using std::ostream;
 
 class DynamicArray {
