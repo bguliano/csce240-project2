@@ -17,12 +17,14 @@ friend ostream& operator << (ostream& whereto, const DynamicArray& arr) {
     return whereto;
 }
 
-public:
-    explicit DynamicArray(int size = 1) : size_(size > 0 ? size : 1), values_(new int[size_]()) {
+ public:
+    explicit DynamicArray(int size = 1) : size_(size > 0 ? size : 1),
+                                            values_(new int[size_]()) {
         for (int i = 0; i < size_; i++) values_[i] = 0;
     }
 
-    explicit DynamicArray(const DynamicArray &copy_from) : size_(copy_from.size_), values_(new int[size_]) {
+    explicit DynamicArray(const DynamicArray &copy_from) :
+             size_(copy_from.size_), values_(new int[size_]) {
         for (int i = 0; i < size_; i++) values_[i] = copy_from.values_[i];
     }
 
@@ -131,7 +133,6 @@ public:
     CopyHelper(0, index, temp);
 
     temp[index] = toAdd;
-    CopyHelper(index + 1, size_, temp);
     for (int i = index +1; i <= size_; ++i) {
         temp[i] = values_[i-1];
     }
@@ -176,7 +177,6 @@ public:
 
         // iterate over each value to find "search"
         for (int i = 0; i < size_; i++) {
-
             // if found, replace, and increment counter per instructions
             if (values_[i] == search) {
                 values_[i] = replace;
@@ -194,7 +194,8 @@ public:
             // reset found flag
             bool foundEarlier = false;
 
-            // iterate over the remaining numbers and look for equality to the current one (i)
+            // iterate over the remaining numbers and look
+            // for equality to the current one (i)
             for (int j = 0; j < i; j++) {
                 if (values_[j] == values_[i]) {
                     foundEarlier = true;
@@ -209,7 +210,8 @@ public:
     }
 
     void RemoveDuplicates() {
-        // let's just set up a new values array with the size, which we can grab from the number of unique values
+        // let's just set up a new values array with the size,
+        // which we can grab from the number of unique values
         int uniqueCount = NumUnique();
         int *newValues = new int[uniqueCount];
         int newIndex = 0;
@@ -240,14 +242,16 @@ public:
     }
 
     void Sort(bool descending = false) {
-        // iterate over the array again, but one less so we can compare the next element
+        // iterate over the array again,
+        // but one less so we can compare the next element
         // at the end of the array
         for (int i = 0; i < size_ - 1; i++) {
             // compare each pair of adjacent values
             for (int j = 0; j < size_ - i - 1; j++) {
                 // swap if values are out of order for ascending sort,
                 // or swap in the opposite case if descending
-                if (values_[j] > values_[j + 1] || (descending && values_[j] < values_[j + 1])) {
+                if (values_[j] > values_[j + 1] ||
+                    (descending && values_[j] < values_[j + 1])) {
                     int temp = values_[j];
                     values_[j] = values_[j + 1];
                     values_[j + 1] = temp;
@@ -272,7 +276,7 @@ public:
         return values_[size_ - 1];
     }
 
-private:
+ private:
     int size_;
     int *values_;
     inline static char delimiter_ = ' ';  // (for separator used by <<)
