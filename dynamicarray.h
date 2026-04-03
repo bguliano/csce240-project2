@@ -8,147 +8,149 @@
 using std::ostream;
 
 class DynamicArray {
-friend ostream& operator << (ostream& whereto, const DynamicArray& arr) {
-    for (int i = 0; i <= arr.GetSize() - 1; ++i) {
-        whereto << arr.values_[i];
+    friend ostream &operator <<(ostream &whereto, const DynamicArray &arr) {
+        for (int i = 0; i <= arr.GetSize() - 1; ++i) {
+            whereto << arr.values_[i];
 
-        if (i != arr.GetSize() - 1) {
-            whereto << arr.GetDelimiter();
+            if (i != arr.GetSize() - 1) {
+                whereto << arr.GetDelimiter();
+            }
         }
+        return whereto;
     }
-    return whereto;
-}
 
- public:
+public:
     explicit DynamicArray(int size = 1) : size_(size > 0 ? size : 1),
-                                            values_(new int[size_]()) {
+                                          values_(new int[size_]()) {
         for (int i = 0; i < size_; i++) values_[i] = 0;
     }
 
-    explicit DynamicArray(const DynamicArray &copy_from) :
-             size_(copy_from.size_), values_(new int[size_]) {
+    explicit DynamicArray(const DynamicArray &copy_from) : size_(copy_from.size_), values_(new int[size_]) {
         for (int i = 0; i < size_; i++) values_[i] = copy_from.values_[i];
     }
 
-    bool operator == (const DynamicArray& right) const {
-    if (size_ != right.size_) {
-        return false;
-    }
-    // now loop through each array to check value for value
-    for (int i = 0; i < size_; ++i) {
-        if (values_[i] != right.values_[i]) {
+    bool operator ==(const DynamicArray &right) const {
+        if (size_ != right.size_) {
             return false;
         }
-    }
-    return true;
-}
-
-    int GetSize() const {
-    return size_;
-}
-
-    void SetSize(int newSize, bool isCopy = true) {
-    if (newSize < 1) {
-        newSize = 1;
-        isCopy = false;
-    }
-
-    // Since valid input, allocate mem
-    int * temp = new int[newSize];
-    if (!isCopy) {
-        for (int i = 0; i < newSize; ++i) {
-            temp[i] = 0;
-        }
-    } else {
-        int smaller = (size_ < newSize) ? size_ : newSize;
-        CopyHelper(0, smaller, temp);
-
-        // Now fill rest with 0s
-        for (int i = smaller; i < newSize; ++i) {
-            temp[i] = 0;
-        }
-    }
-    delete[] values_;
-    values_ = temp;
-    size_ = newSize;
-}
-
-    bool AllUnique() const {
-    for (int i = 0; i < size_; ++i) {
-        for (int j = i+1; j < size_; ++j) {
-            if (values_[i] == values_[j]) {
+        // now loop through each array to check value for value
+        for (int i = 0; i < size_; ++i) {
+            if (values_[i] != right.values_[i]) {
                 return false;
             }
         }
+        return true;
     }
-    return true;
-}
+
+    int GetSize() const {
+        return size_;
+    }
+
+    void SetSize(int newSize, bool isCopy = true) {
+        if (newSize < 1) {
+            newSize = 1;
+            isCopy = false;
+        }
+
+        // Since valid input, allocate mem
+        int *temp = new int[newSize];
+        if (!isCopy) {
+            for (int i = 0; i < newSize; ++i) {
+                temp[i] = 0;
+            }
+        } else {
+            int smaller = (size_ < newSize) ? size_ : newSize;
+            CopyHelper(0, smaller, temp);
+
+            // Now fill rest with 0s
+            for (int i = smaller; i < newSize; ++i) {
+                temp[i] = 0;
+            }
+        }
+        delete[] values_;
+        values_ = temp;
+        size_ = newSize;
+    }
+
+    bool AllUnique() const {
+        for (int i = 0; i < size_; ++i) {
+            for (int j = i + 1; j < size_; ++j) {
+                if (values_[i] == values_[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     int RemoveAll(int toRemove) {
-    int copyCount = 0;
-    int newSize = size_;
-    for (int i = 0 ; i < size_; ++i) {
-        if (values_[i] == toRemove) {
-            ++copyCount;
-            --newSize;
-            continue;
-        }
-    }
-    if (copyCount == size_) {
-        SetSize(1, false);
-    }
-    int * temp = new int[newSize];
-    for (int i = 0; i < newSize; ++i) {
-        if (values_[i] != toRemove) {
-            temp[i] = values_[i];
-        }
-        if (values_[i] == toRemove) {
-            for (int j = i; j < newSize; ++j) {
-                temp[j] = values_[j+1];
+        int copyCount = 0;
+        int newSize = size_;
+        for (int i = 0; i < size_; ++i) {
+            // still iterate through entire array
+            if (values_[i] == toRemove) {
+                ++copyCount;
+                --newSize;
             }
-            break;
         }
+
+        if (copyCount == size_) {
+            SetSize(1, false);
+            return copyCount;
+        }
+
+        int *temp = new int[newSize];
+        int tempIndex = 0;
+        for (int i = 0; i < size_; ++i) {
+            if (values_[i] != toRemove) {
+                temp[tempIndex] = values_[i];
+                ++tempIndex;
+            }
+        }
+
+        delete[] values_;
+        values_ = temp;
+        size_ = newSize;
+        return copyCount;
     }
-    delete[] values_;
-    values_ = temp;
-    size_ = newSize;
-    return copyCount;
-}
 
     void Insert(int toAdd, int index) {
-    // validate index: must be greater than 0
-    // leave it the same if invalid index
-    if (index < 0) {
-        return;
-    }
-    if (index > size_) {
-        SetSize(index + 1, true);
-        // this copies values, then sets all extra values to 0
-        // now change target index to toAdd
-        values_[index] = toAdd;
-    } else {
+        // validate index: must be greater than 0
+        // leave it the same if invalid index
+        if (index < 0) {
+            return;
+        }
+
+        if (index > size_) {
+            SetSize(index + 1, true);
+            // this copies values, then sets all extra values to 0
+            // now change target index to toAdd
+            values_[index] = toAdd;
+            // SetSize already updates size_ for this case, otherwise size_ was 1 too large
+            return;
+        }
+
         // make new array of size + 1
-    // copy values to index -1
-    // insert toAdd at index
-    // finish copying over for index +1 to end
-    int * temp = new int[size_ + 1];
-    CopyHelper(0, index, temp);
+        // copy values to index -1
+        // insert toAdd at index
+        // finish copying over for index +1 to end
+        int *temp = new int[size_ + 1];
+        CopyHelper(0, index, temp);
 
-    temp[index] = toAdd;
-    for (int i = index +1; i <= size_; ++i) {
-        temp[i] = values_[i-1];
+        temp[index] = toAdd;
+        for (int i = index + 1; i <= size_; ++i) {
+            temp[i] = values_[i - 1];
+        }
+        delete[] values_;
+        values_ = temp;
+        size_++;
     }
-    delete[] values_;
-    values_ = temp;
-    }
-    size_++;
-}
 
-    void CopyHelper(int start, int end, int * ptr) {
-    for (int i = start; i < end; ++i) {
-        ptr[i] = values_[i];
+    void CopyHelper(int start, int end, int *ptr) {
+        for (int i = start; i < end; ++i) {
+            ptr[i] = values_[i];
+        }
     }
-}
 
     // same from HourlyTemperature.h
     DynamicArray &operator=(const DynamicArray &copy_from) {
@@ -252,7 +254,7 @@ friend ostream& operator << (ostream& whereto, const DynamicArray& arr) {
             for (int j = 0; j < size_ - i - 1; j++) {
                 // swap if values are out of order for ascending sort,
                 // or swap in the opposite case if descending
-                if (values_[j] > values_[j + 1] ||
+                if ((!descending && values_[j] > values_[j + 1]) ||
                     (descending && values_[j] < values_[j + 1])) {
                     int temp = values_[j];
                     values_[j] = values_[j + 1];
@@ -278,7 +280,7 @@ friend ostream& operator << (ostream& whereto, const DynamicArray& arr) {
         return values_[size_ - 1];
     }
 
- private:
+private:
     int size_;
     int *values_;
     inline static char delimiter_ = ' ';  // (for separator used by <<)
