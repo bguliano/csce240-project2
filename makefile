@@ -3,15 +3,9 @@ flags = -Wall -std=c++17
 compile = $(compiler) $(flags) -c
 link = $(compiler) $(flags)
 
-project2sampletests : project2sampletests.o dynamicarray.o
-	$(link) $^ -o $@
-	./$@
 
-project2sampletests.o : project2sampletests.cc dynamicarray.h
-	$(compile) $<
-
-dynamicarray.o : dynamicarray.h
-	$(compile) $<
+project2test : project2sampletests.cc dynamicarray.h
+	$(link) project2sampletests.cc -o project2test
 
 clean :
-	rm *.o project2sampletests
+	rm -f project2test *.o 
